@@ -11,7 +11,7 @@ class UsersController extends BaseController {
 	}
 
 	handleRoutes(): void {
-		this.router.get(this.routePrefix, UsersRepository.index);
+		this.router.get(this.routePrefix, [], UsersRepository.index);
 		this.router.post(this.routePrefix, UsersRepository.create);
 		this.router.put(`${this.routePrefix}/:id`, UsersRepository.update);
 		this.router.delete(`${this.routePrefix}/:id`, UsersRepository.delete);

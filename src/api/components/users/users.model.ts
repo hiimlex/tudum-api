@@ -11,7 +11,10 @@ interface User {
 	updatedAt: Date;
 }
 
-interface IUserModel extends Model<IUserDocument> {}
+interface IUserModel extends Model<IUserDocument> {
+	findByCredentials(login: string, password: string): Promise<IUserDocument>;
+	findByToken(token: string): Promise<IUserDocument>;
+}
 
 const UsersModel: IUserModel = model<IUserDocument, IUserModel>(
 	"Users",

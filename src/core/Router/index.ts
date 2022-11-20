@@ -1,4 +1,5 @@
 import { Application } from "express";
+import { AuthController } from "../../api";
 import { UsersController } from "../../api/components/users/users.controller";
 
 class Router {
@@ -11,12 +12,18 @@ class Router {
 	}
 
 	initRoutes(): void {
-		this.handleUsersRoutes();
+		this.initUsersRoutes();
+		this.initAuthRoutes();
 	}
 
-	handleUsersRoutes(): void {
+	initUsersRoutes(): void {
 		const usersController = new UsersController();
 		this.app.use(`${this.apiPrefix}`, usersController.router);
+	}
+
+	initAuthRoutes(): void {
+		const authController = new AuthController();
+		this.app.use(`${this.apiPrefix}`, authController.router);
 	}
 }
 
