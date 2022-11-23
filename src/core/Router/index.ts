@@ -22,6 +22,9 @@ class Router {
 	initUsersRoutes(): void {
 		const usersController = new UsersController();
 		this.app.use(`${this.apiPrefix}`, usersController.router);
+		this.app.get("/", (req, res) => {
+			res.send("Hello World");
+		});
 	}
 
 	initAuthRoutes(): void {
