@@ -1,15 +1,14 @@
 import { compareSync, hashSync } from "bcryptjs";
-import { Document, Schema } from "mongoose";
+import jwt from "jsonwebtoken";
+import { Document, ObjectId, Schema } from "mongoose";
 import isEmail from "validator/lib/isEmail";
 import { HttpException } from "../../../core/ErrorException";
-import { User } from "./users.model";
-import jwt, { decode } from "jsonwebtoken";
 import { ForbiddenException, UnauthorizedException } from "../auth";
+import { User } from "./users.model";
 
 const uniqueValidator = require("mongoose-unique-validator");
 
 export interface IUserDocument extends User, Document {
-	id: string;
 	accessToken: string;
 	fullUser(): Promise<User>;
 	generateAuthToken(): Promise<string>;
@@ -44,6 +43,14 @@ const UsersSchema = new Schema(
 			trim: true,
 			validate: [isEmail, "Invalid email"],
 		},
+		theme: {
+			primary: {
+				type: String,
+			},
+			secondary: {
+				type: String,
+			},
+		},
 	},
 	{
 		versionKey: false,
@@ -55,7 +62,7 @@ const UsersSchema = new Schema(
 UsersSchema.plugin(uniqueValidator, { message: "{PATH} already exists." });
 
 UsersSchema.pre("save", async function (next) {
-	const user = this as IUserDocument;
+	const user = this;
 
 	if (user.isModified("password")) {
 		user.password = hashSync(user.password, 12);
@@ -64,26 +71,14 @@ UsersSchema.pre("save", async function (next) {
 	next();
 });
 
-UsersSchema.virtual("id").get(function () {
-	return this._id.toHexString();
-});
-
-UsersSchema.set("toJSON", {
-	virtuals: true,
-});
-
-UsersSchema.set("toObject", {
-	virtuals: true,
-});
-
 UsersSchema.methods.toJSON = function () {
-	const { _id, password, accessToken, ...user } = this.toObject();
+	const { password, accessToken, ...user } = this.toObject();
 
 	return user;
 };
 
 UsersSchema.methods.fullUser = function () {
-	const { _id, ...user } = (this as IUserDocument).toObject();
+	const { ...user } = (this as IUserDocument).toObject();
 
 	return user;
 };

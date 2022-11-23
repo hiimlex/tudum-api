@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { getAuthorizationToken, handleError } from "../../../core";
 import { HttpException } from "../../../core/ErrorException";
 import { User, UsersModel } from "./users.model";
 
@@ -9,11 +10,7 @@ class UsersRepository {
 
 			return res.status(200).json(users);
 		} catch (err: any) {
-			if (err instanceof HttpException) {
-				return res.status(err.status).json({ message: err.message });
-			}
-
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
 		}
 	}
 
@@ -29,11 +26,7 @@ class UsersRepository {
 
 			return res.status(200).json(user);
 		} catch (err: any) {
-			if (err instanceof HttpException) {
-				return res.status(err.status).json({ message: err.message });
-			}
-
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
 		}
 	}
 
@@ -47,20 +40,17 @@ class UsersRepository {
 
 			return res.status(201).json(newUser);
 		} catch (err: any) {
-			if (err instanceof HttpException) {
-				return res.status(err.status).json({ message: err.message });
-			}
-
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
 		}
 	}
 
 	async update(req: Request, res: Response): Promise<Response<null>> {
 		try {
-			const id = req.params.id;
-			const data = req.body;
+			const token = getAuthorizationToken(req);
 
-			const user = await UsersModel.findById(id);
+			const user = await UsersModel.findByToken(token);
+
+			const data = req.body;
 
 			if (!user) {
 				throw new HttpException(404, "User not found");
@@ -69,21 +59,17 @@ class UsersRepository {
 			await user.updateOne(data);
 			await user.save();
 
-			return res.status(200).json(null);
+			return res.status(204).json(null);
 		} catch (err: any) {
-			if (err instanceof HttpException) {
-				return res.status(err.status).json({ message: err.message });
-			}
-
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
 		}
 	}
 
 	async delete(req: Request, res: Response): Promise<Response<null>> {
 		try {
-			const id = req.params.id;
+			const token = getAuthorizationToken(req);
 
-			const user = await UsersModel.findById(id);
+			const user = await UsersModel.findByToken(token);
 
 			if (!user) {
 				throw new HttpException(404, "User not found");
@@ -91,13 +77,9 @@ class UsersRepository {
 
 			await user.deleteOne();
 
-			return res.status(200).json(null);
+			return res.status(204).json(null);
 		} catch (err: any) {
-			if (err instanceof HttpException) {
-				return res.status(err.status).json({ message: err.message });
-			}
-
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import { IUserDocument, TOKEN_SECRET } from "../users/users.schema";
 import jwt from "jsonwebtoken";
 import getAuthorization from "../../../core/getAuthorizationToken";
 import getAuthorizationToken from "../../../core/getAuthorizationToken";
+import { handleError } from "../../../core";
 
 class AuthRepositoryClass {
 	async login(
@@ -24,7 +25,7 @@ class AuthRepositoryClass {
 
 			return res.status(200).json({ token });
 		} catch (err: any) {
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
 		}
 	}
 
@@ -36,11 +37,7 @@ class AuthRepositoryClass {
 
 			return res.status(200).json(user.fullUser());
 		} catch (err: any) {
-			if (err instanceof HttpException) {
-				return res.status(err.status).json({ message: err.message });
-			}
-
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
 		}
 	}
 
@@ -56,7 +53,21 @@ class AuthRepositoryClass {
 
 			next();
 		} catch (err: any) {
-			return res.status(400).json({ message: err.message });
+			return handleError(err, res);
+		}
+	}
+
+	async register(req: Request, res: Response): Promise<Response<User>> {
+		try {
+			const user = new UsersModel(req.body);
+
+			await user.save();
+
+			const token = await user.generateAuthToken();
+
+			return res.status(201).json({ user, token });
+		} catch (err: any) {
+			return handleError(err, res);
 		}
 	}
 }

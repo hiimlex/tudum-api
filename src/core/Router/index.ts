@@ -1,5 +1,6 @@
 import { Application } from "express";
-import { AuthController } from "../../api";
+import { AuthController, NotesController } from "../../api";
+import { ChecklistsController } from "../../api/components/checklist/checklist.controller";
 import { UsersController } from "../../api/components/users/users.controller";
 
 class Router {
@@ -14,6 +15,8 @@ class Router {
 	initRoutes(): void {
 		this.initUsersRoutes();
 		this.initAuthRoutes();
+		this.initNotesRoutes();
+		this.initChecklistsRoutes();
 	}
 
 	initUsersRoutes(): void {
@@ -24,6 +27,16 @@ class Router {
 	initAuthRoutes(): void {
 		const authController = new AuthController();
 		this.app.use(`${this.apiPrefix}`, authController.router);
+	}
+
+	initNotesRoutes(): void {
+		const notesController = new NotesController();
+		this.app.use(`${this.apiPrefix}`, notesController.router);
+	}
+
+	initChecklistsRoutes(): void {
+		const checklistsController = new ChecklistsController();
+		this.app.use(`${this.apiPrefix}`, checklistsController.router);
 	}
 }
 

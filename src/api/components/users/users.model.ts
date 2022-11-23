@@ -2,11 +2,14 @@ import { model, Model } from "mongoose";
 import { IUserDocument, UsersSchema } from "./users.schema";
 
 interface User {
-	id: string;
 	name: string;
 	email: string;
 	username: string;
 	password: string;
+	theme?: {
+		primary: string;
+		secondary: string;
+	};
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -22,3 +25,4 @@ const UsersModel: IUserModel = model<IUserDocument, IUserModel>(
 );
 
 export { User, UsersModel };
+

@@ -21,12 +21,12 @@ class UsersController extends BaseController {
 		);
 		this.router.post(this.routePrefix, UsersRepository.create);
 		this.router.put(
-			`${this.routePrefix}/:id`,
+			this.routePrefix,
 			AuthRepository.isAuthenticated,
 			UsersRepository.update
 		);
 		this.router.delete(
-			`${this.routePrefix}/:id`,
+			this.routePrefix,
 			AuthRepository.isAuthenticated,
 			UsersRepository.delete
 		);

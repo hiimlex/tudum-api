@@ -18,6 +18,7 @@ class AuthController extends BaseController {
 			AuthRepository.isAuthenticated,
 			AuthRepository.currentUser
 		);
+		this.router.post(this.routePrefix + "/register", AuthRepository.register);
 	}
 }
 
