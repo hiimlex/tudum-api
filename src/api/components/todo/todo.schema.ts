@@ -13,6 +13,9 @@ const TodoSchema = new Schema(
 			type: Boolean,
 			default: false,
 		},
+		doneDate: {
+			type: Date,
+		},
 	},
 	{
 		timestamps: true,

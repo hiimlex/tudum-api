@@ -78,7 +78,7 @@ UsersSchema.methods.toJSON = function () {
 };
 
 UsersSchema.methods.fullUser = function () {
-	const { ...user } = (this as IUserDocument).toObject();
+	const { password, ...user } = (this as IUserDocument).toObject();
 
 	return user;
 };

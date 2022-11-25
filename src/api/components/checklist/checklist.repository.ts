@@ -176,6 +176,12 @@ class ChecklistsRepositoryClass {
 
 			const body = req.body;
 
+			if (body.done) {
+				body.doneDate = new Date().toISOString();
+			} else {
+				body.doneDate = null;
+			}
+
 			await todo.updateOne(body);
 
 			await todo.save();

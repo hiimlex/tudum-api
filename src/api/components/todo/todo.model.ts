@@ -5,6 +5,7 @@ interface Todo {
 	title: string;
 	done: boolean;
 	owner: Schema.Types.ObjectId;
+	doneDate?: Date;
 }
 
 interface ITodoModel extends Model<ITodoDocument> {}
